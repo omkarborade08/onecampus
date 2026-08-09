@@ -71,9 +71,10 @@ function Dashboard({ user }) {
         <h1 className="mt-2 text-4xl font-bold">Welcome back, {user.name || 'student'}.</h1>
         <p className="mt-3 max-w-2xl text-[#D1D5DB]">Your campus activity, conversations, and opportunities in one focused dashboard.</p>
       </section>
-      <section className="mt-8 grid gap-5 md:grid-cols-3">
+      <section className="mt-8 grid gap-5 md:grid-cols-4">
         <DashboardCard to="/events" title="Campus events" text="Create an event or manage your registrations." action="Open events" />
         <DashboardCard to="/marketplace" title="Marketplace" text="Browse useful items shared by students on your campus." action="Browse listings" />
+        <DashboardCard to="/lost-found" title="Lost & Found" text="Report lost items or help others find theirs." action="Browse lost & found" />
         <DashboardCard to="/chat" title="Messages" text="Continue conversations with buyers, sellers, and event attendees." action="Open messages" />
       </section>
     </div>
