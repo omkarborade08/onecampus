@@ -1,4 +1,4 @@
-import { api, getAuthToken } from './api';
+import { api, getAuthToken, API_BASE } from './api';
 
 export const marketplaceApi = {
   getAll: (category) => {
@@ -13,7 +13,7 @@ export const marketplaceApi = {
     const formData = new FormData()
     formData.append('file', file)
 
-    const res = await fetch('/api/marketplace/upload', {
+    const res = await fetch(`${API_BASE}/marketplace/upload`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,

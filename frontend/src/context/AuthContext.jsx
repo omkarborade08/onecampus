@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
+import { API_BASE } from '../services/api'
 
 const AuthContext = createContext(null)
 
@@ -40,7 +41,7 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('campusconnect_refresh_token')
     setUser(null)
     if (userId) {
-      fetch('/api/auth/logout?userId=' + encodeURIComponent(userId), { method: 'POST' }).catch(() => {})
+      fetch(`${API_BASE}/auth/logout?userId=` + encodeURIComponent(userId), { method: 'POST' }).catch(() => {})
     }
   }
 

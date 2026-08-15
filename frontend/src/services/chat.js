@@ -1,4 +1,4 @@
-import { api, getAuthToken } from './api';
+import { api, getAuthToken, API_BASE } from './api';
 
 export const chatApi = {
   getConversations: () => api.get('/chat/conversations'),
@@ -13,7 +13,7 @@ export const chatApi = {
     const formData = new FormData()
     formData.append('file', file)
 
-    const res = await fetch('/api/chat/upload', {
+    const res = await fetch(`${API_BASE}/chat/upload`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,

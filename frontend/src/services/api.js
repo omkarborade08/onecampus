@@ -1,4 +1,10 @@
-const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
+const API_BASE = (() => {
+  const raw = import.meta.env.VITE_API_BASE_URL || '/api'
+  if (raw.startsWith('http')) return raw + '/api'
+  return raw
+})()
+
+export { API_BASE }
 
 function getAuthHeaders() {
   const token = localStorage.getItem('campusconnect_token')

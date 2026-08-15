@@ -1,4 +1,4 @@
-import { api, getAuthToken } from './api';
+import { api, getAuthToken, API_BASE } from './api';
 
 export const lostFoundApi = {
   getAll: (type) => {
@@ -15,7 +15,7 @@ export const lostFoundApi = {
     const formData = new FormData()
     formData.append('file', file)
 
-    const res = await fetch('/api/lost-found/upload', {
+    const res = await fetch(`${API_BASE}/lost-found/upload`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
