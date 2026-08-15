@@ -14,7 +14,7 @@ export default defineConfig({
         changeOrigin: true,
       },
       '/ws': {
-        target: 'ws://localhost:8080',
+        target: 'wss://onecampusapi.onrender.com',
         ws: true,
         changeOrigin: true,
       }

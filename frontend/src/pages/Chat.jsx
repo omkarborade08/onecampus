@@ -5,7 +5,9 @@ import { chatApi } from '../services/chat'
 import { getAuthToken } from '../services/api'
 import { useAuth } from '../context/AuthContext'
 
-const WS_BASE = (window.location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + window.location.host
+const WS_BASE = import.meta.env.VITE_API_BASE_URL 
+  ? import.meta.env.VITE_API_BASE_URL.replace(/^https?/, 'wss')
+  : (window.location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + window.location.host
 
 function encodeStompFrame(command, headers, body = '') {
   const lines = [command, ...Object.keys(headers).map((k) => `${k}:${headers[k]}`)]
