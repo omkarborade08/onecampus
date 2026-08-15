@@ -15,7 +15,9 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -130,7 +132,7 @@ public class ChatService {
                 .imageUrl(request.getImageUrl())
                 .type(messageType)
                 .mine(false)
-                .time(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")))
+                .time(LocalTime.now(Clock.system(ZoneId.of("Asia/Kolkata"))).format(DateTimeFormatter.ofPattern("HH:mm")))
                 .conversation(conversation)
                 .sender(user)
                 .build();
