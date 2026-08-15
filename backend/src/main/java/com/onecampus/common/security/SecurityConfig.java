@@ -2,21 +2,28 @@ package com.onecampus.common.security;
 
 import com.onecampus.identity.entity.User;
 import com.onecampus.identity.repository.UserRepository;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -33,63 +40,73 @@ public class SecurityConfig {
     @Value("${jwt.expiration}")
     private long jwtExpiration;
 
+    /**
+     * JWT Authentication Filter
+     */
     @Bean
     public JwtAuthFilter jwtAuthFilter(
             JwtService jwtService,
             UserRepository userRepository) {
 
-        return new JwtAuthFilter(jwtService, userRepository);
+        return new JwtAuthFilter(
+                jwtService,
+                userRepository
+        );
     }
 
+    /**
+     * Spring Security configuration
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             JwtAuthFilter jwtAuthFilter) throws Exception {
 
         http
-            // Global CORS
+            // Enable global CORS
             .cors(cors ->
                 cors.configurationSource(corsConfigurationSource())
             )
 
-            // Disable CSRF for REST API
+            // REST API - CSRF disabled
             .csrf(csrf -> csrf.disable())
 
-            // JWT-based stateless authentication
+            // JWT authentication is stateless
             .sessionManagement(session ->
                 session.sessionCreationPolicy(
                     SessionCreationPolicy.STATELESS
                 )
             )
 
+            // Authorization rules
             .authorizeHttpRequests(auth -> auth
 
-                // =========================
-                // PUBLIC AUTHENTICATION
-                // =========================
-                .requestMatchers("/auth/**").permitAll()
+                // ==============================
+                // AUTHENTICATION - PUBLIC
+                // ==============================
                 .requestMatchers("/api/auth/**").permitAll()
 
-                // =========================
+                // ==============================
                 // PUBLIC APIs
-                // =========================
+                // ==============================
                 .requestMatchers("/api/campuses/**").permitAll()
                 .requestMatchers("/api/marketplace/**").permitAll()
                 .requestMatchers("/api/lost-found/**").permitAll()
                 .requestMatchers("/api/events/**").permitAll()
                 .requestMatchers("/api/chat/**").permitAll()
 
-                // =========================
+                // ==============================
                 // WEBSOCKET
-                // =========================
+                // ==============================
                 .requestMatchers("/ws/**").permitAll()
                 .requestMatchers("/topic/**").permitAll()
                 .requestMatchers("/queue/**").permitAll()
                 .requestMatchers("/app/**").permitAll()
 
-                // =========================
-                // EVERYTHING ELSE
-                // =========================
+                // ==============================
+                // ALL OTHER ENDPOINTS
+                // REQUIRE JWT
+                // ==============================
                 .anyRequest().authenticated()
             )
 
@@ -102,11 +119,17 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Password encoder
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Authentication provider
+     */
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider(
             UserRepository userRepository,
@@ -118,7 +141,8 @@ public class SecurityConfig {
         provider.setUserDetailsService(
             (UserDetailsService) email -> {
 
-                User user = userRepository.findByEmail(email)
+                User user = userRepository
+                        .findByEmail(email)
                         .orElseThrow(() ->
                             new UsernameNotFoundException(
                                 "User not found"
@@ -134,6 +158,9 @@ public class SecurityConfig {
         return provider;
     }
 
+    /**
+     * Authentication manager
+     */
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config) throws Exception {
@@ -141,9 +168,9 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    // ==========================================
-    // GLOBAL CORS CONFIGURATION
-    // ==========================================
+    /**
+     * Global CORS configuration
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 
@@ -154,7 +181,7 @@ public class SecurityConfig {
                 "http://localhost:5173",
                 "http://localhost:3000"
 
-                // ADD YOUR VERCEL URL HERE
+                // Add your Vercel URL here.
                 // Example:
                 // "https://onecampus.vercel.app"
         ));
@@ -175,7 +202,7 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
 
-        // Apply CORS to ALL endpoints
+        // Apply CORS to every endpoint
         source.registerCorsConfiguration(
                 "/**",
                 configuration
