@@ -84,7 +84,8 @@ public class SecurityConfig {
                 // ==============================
                 // AUTHENTICATION - PUBLIC
                 // ==============================
-                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/auth/**").permitAll()
+.requestMatchers("/api/auth/**").permitAll()
 
                 // ==============================
                 // PUBLIC APIs
